@@ -1,0 +1,4 @@
+dse spark --master spark://172.31.20.34:9000 \
+          --name "test: \
+          --executer-memory 2G \
+          --total-executor-cores 4
