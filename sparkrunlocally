@@ -1,0 +1,2 @@
+dse spark --master local[4] \
+          --name "test"
