@@ -1,0 +1,11 @@
+What is Spark Context
+  Spark context is an object and represents a connection to Spark Cluster
+  In Spark Shell, spark context object is created automatically.
+  In stand alone application, spark context must be created programatically.
+  
+Spark Cassandra Connector:
+  A library that allows moving data between spark and cassandra.
+  
+  
+Data Source:
+  Data is initially loaded into spark from an external data source
