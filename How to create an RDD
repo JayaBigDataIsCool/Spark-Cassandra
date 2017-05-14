@@ -9,3 +9,40 @@ Spark Cassandra Connector:
   
 Data Source:
   Data is initially loaded into spark from an external data source
+  
+CREATE TABLE killr_video.videos (
+   video_id TIMEUUID,
+   avg_rating FLOAT,
+   description TEXT,
+   genres SET<TEXT>,
+   mpaa_rating TEXT,
+   release_date TIMESTAMP,
+   release_year INT,
+   title TEXT,
+   user_id UUID,
+   PRIMARY KEY (video_id)
+);video_id, title, yearWinnie the Pooh
+The Tigger Movie
+Pirates of the Caribbean
+Apollo 13
+Mallcop
+Mockingjay - Part 1
+The Good Dinosaur
+Lava
+The Peanuts Movie
+val movies = List("Winnee the Pooh","The Tigger Movie","Pirates of the Caribbean","Apollo 13","Mallcop",
+"Mockingjay - Part 1",
+"The Good Dinosaur",
+"Lava",
+"The Peanuts Movie")
+
+val movrdd = sc.parallelize(movies)
+
+val filrdd = movrdd.take(3).foreach(println)
+
+val casdata = sc.cassandraTable("killr_video","videos").select("title", "avg_rating").toArray().take(1).foreach(println)
+
+val csvArray = sc.textFile("file:///root/data/video-years.csv").map(line => line.split(",") )
+val csvRDD = csvArray collect { case Array(video_id: String, title: String, year: String) => (video_id,title,year.toInt) }
+
+val filRDD = csvRDD.filter{case(id,tit,year) => year >= 2001}
