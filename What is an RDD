@@ -3,3 +3,12 @@ Distributed - Data may reside on different nodes in a cluster
 Resilent - Data is recomputed based on lineage in case of failure
 Immutable - Dataset is transformed into a new dataset rather than mutated
 In-Memory - Data and computation is kept in memory as much as possible
+
+We can only create or destroy an RDD but not modify it. This is the key because it simplifies the entire development. 
+Always we transform an RDD to create a new RDD. It will not affect the Original RDD
+
+
+
+
+
+
