@@ -2,4 +2,4 @@ Dataset - Dataset contains primitive values, records, class objects, tuples
 Distributed - Data may reside on different nodes in a cluster
 Resilent - Data is recomputed based on lineage in case of failure
 Immutable - Dataset is transformed into a new dataset rather than mutated
-In-Memory - Data is kept in memory as much as possible
+In-Memory - Data and computation is kept in memory as much as possible
