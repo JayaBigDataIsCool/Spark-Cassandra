@@ -1,0 +1,8 @@
+val jimmovie = sc.textFile("file:////root/data/jims-favorite-movies.csv")
+val janmovie = sc.textFile("file:////root/data/janes-favorite-movies.csv")
+
+val intmov = jimmovie.intersection(janmovie).collect().foreach(println)
+
+val intmov = jimmovie.union(janmovie).distinct().collect().foreach(println)
+
+val intmov = janmovie.subtract(jimmovie).collect().foreach(println)
