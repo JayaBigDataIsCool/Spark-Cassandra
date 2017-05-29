@@ -14,3 +14,41 @@ cassandratableRDD.filter(a=> (a.get[Option[Float]]("RRRR")).isDefined &&
        row.getFloatOption("RRRR").getOrElse("Not Rated") + "]")
        .collect
        .foreach(println)
+
+
+CREATE TABLE killr_video.videos (
+   video_id TIMEUUID,
+   avg_rating FLOAT,
+   description TEXT,
+   genres SET<TEXT>,
+   mpaa_rating TEXT,
+   release_date TIMESTAMP,
+   release_year INT,
+   title TEXT,
+   user_id UUID,
+   PRIMARY KEY (video_id)
+);Title: The Lego Movie                Year: 2014
+Title: How to Train Your Dragon 2    Year: 2014
+Title: The Book of Life              Year: 2014
+.
+.
+.
+val rows = sc.cassandraTable("killr_video", "videos").select("title","genres","release_year")
+val filterGenre = rows.filter(movie => movie.getList[String]("genres").contains("Animation"))
+val filterYear = filterGenre.filter(movie => movie.getInt("release_year") == 2014)
+val output = filterYear.map( movie => "Title: " + String.format("%1$-26s", movie.getString("title")) + "   " +
+                                      "Year: " + movie.getInt("release_year"))
+output.collect.foreach(println)
+
+val rows = sc.cassandraTable("killr_video", "videos").select("mpaa_rating")
+val numRows = rows.count
+val numRatedG = rows.filter(row => row.getString("mpaa_rating") == "G").count
+val numRatedPG = rows.filter(row => row.getString("mpaa_rating") == "PG").count
+val numRatedPG13 = rows.filter(row => row.getString("mpaa_rating") == "PG-13").count
+val numRatedR = rows.filter(row => row.getString("mpaa_rating") == "R").count
+val numRatedNR = rows.filter(row => row.getString("mpaa_rating") == "NR").count
+printf("Percentage of movies rated G     : %.2f%%\n", (100.0 * numRatedG / numRows))
+printf("Percentage of movies rated PG    : %.2f%%\n", (100.0 * numRatedPG / numRows))
+printf("Percentage of movies rated PG-13 : %.2f%%\n", (100.0 * numRatedPG13 / numRows))
+printf("Percentage of movies rated R     : %.2f%%\n", (100.0 * numRatedR / numRows))
+printf("Percentage of movies rated NR    : %.2f%%\n", (100.0 * numRatedNR / numRows))
