@@ -1,0 +1,22 @@
+sc.cassandraTable[(Int, String, Option[Float])]("keyspace", "table")
+  .where("actor == 'johny dep'").select("AAAA","BBBB","CCCC")
+  
+sc.cassandraTable("keyspace", "table")
+  .where("actor == 'johny dep'").select("AAAA","BBBB","CCCC")
+  .as((a:Int, b:String, c:Option[Float]) => (a,b,c))
+  
+case class record((a:Int, b:String, c:Option[Float])
+sc.cassandraTable[record]("keyspace", "table")
+  .where("actor == 'johny dep'").select("AAAA","BBBB","CCCC")
+
+case class record((a:Int, b:String, c:Option[Float])
+sc.cassandraTable("keyspace", "table")
+  .where("actor == 'johny dep'").select("AAAA","BBBB","CCCC")
+  .as((a:Int, b:String, c:Option[Float]) => new record(a,b,c))
+  
+Less Efficient:
+===============
+
+sc.cassandraTable("keyspace", "table")
+  .where("actor == 'johny dep'").select("AAAA","BBBB","CCCC")
+  .map(a==> (a.getint("a"), a.getString("b"), a.getFloatOption("c")))
