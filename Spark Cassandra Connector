@@ -1,3 +1,19 @@
+Bad Way
+========
 sc.cassandraTable("keyspace","table")
   .filter(a => a.getInt("XXXX") == "ZZZZZ")
-  .map(
+  .map(a=> (a.getString("SSSS"), a.getFloat("FFFFF")))
+  .sortByKey(False)
+  .take(10)
+  .foreach(println)
+  
+Good Way:
+=========
+
+sc.cassandraTable("keyspace", "table")
+  .select("AAAA", "ddddd")
+  .where("AAAA > 10")
+  .withDescOrder
+  .limit(5)
+  .collect
+  .foreach(println)
