@@ -1,2 +1,3 @@
 sc.cassandraTable("keyspace","table")
-  .filter
+  .filter(a => a.getInt("XXXX") == "ZZZZZ")
+  .map(
