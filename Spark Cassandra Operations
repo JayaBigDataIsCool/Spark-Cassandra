@@ -1,0 +1,16 @@
+CassandraTableRDD.filter(a => (a.getString("XXX").toLowerCase.contains("SSS")))
+  .map(row => row.getString("a") +
+       "(" + 
+       row.getFloatOption("RRRR").getOrElse("Not Rated") + "]")
+       .collect
+       .foreach(println)
+       
+       
+cassandratableRDD.filter(a=> (a.get[Option[Float]]("RRRR")).isDefined &&
+                              a.get[Option[Float]]("RRRR")).get >= 6.5) &&
+                              a.getSet[String]("SSSSS").toLoaweCase.contains("SSSSSS")
+                                .map(row => row.getString("a") +
+       "(" + 
+       row.getFloatOption("RRRR").getOrElse("Not Rated") + "]")
+       .collect
+       .foreach(println)
