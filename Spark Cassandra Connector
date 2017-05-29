@@ -1,0 +1,2 @@
+sc.cassandraTable("keyspace","table")
+  .filter
