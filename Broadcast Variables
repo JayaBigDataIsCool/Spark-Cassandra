@@ -1,0 +1,46 @@
+CREATE TABLE killr_video.videos (
+    video_id TIMEUUID PRIMARY KEY,
+    avg_rating FLOAT,
+    description TEXT,
+    genres SET<TEXT>,
+    mpaa_rating TEXT,
+    release_date TIMESTAMP,
+    release_year INT,
+    title TEXT,
+    user_id UUID
+)val superheroes = Set("Batman", "Superman", "Wolverine")
+
+case class Video(title : String, description : Option[String])
+
+def descriptionContainsSuperhero(vid : Video) : Boolean =
+{
+   for(w <- vid.description.getOrElse("").split(' '))
+   {
+      if(superheroes.contains(w))
+      {
+         return true;
+      }
+   }
+   return false;
+}
+
+val videos = sc.cassandraTable[Video]("killrvideo", "videos")
+videos.filter(descriptionContainsSuperhero).collect.foreach(record => println(record + "\n")) 
+val superheroes = sc.broadcast(Set("Batman", "Superman", "Wolverine"))
+
+case class Video(title : String, description : Option[String])
+
+def descriptionContainsSuperhero(vid : Video) : Boolean =
+{
+   for(w <- vid.description.getOrElse("").split(' '))
+   {
+      if(superheroes.value.contains(w))
+      {
+         return true;
+      }
+   }
+   return false;
+}
+
+val videos = sc.cassandraTable[Video]("killr_video", "videos")
+videos.filter(descriptionContainsSuperhero).collect.foreach(record => println(record + "\n")) 
