@@ -1,0 +1,26 @@
+CREATE TABLE killr_video.videos (
+    video_id TIMEUUID PRIMARY KEY,
+    avg_rating FLOAT,
+    description TEXT,
+    genres SET<TEXT>,
+    mpaa_rating TEXT,
+    release_date TIMESTAMP,
+    release_year INT,
+    title TEXT,
+    user_id UUID
+);case class Video( description : Option[String] )
+
+val videos = sc.cassandraTable[Video]("killr_video", "videos").select("description")
+
+val numVideos = videos.count
+val numVideosWithoutComments = videos.filter(v => v.description.isEmpty).count
+
+printf( "%.2f%%", 100.0 * numVideosWithoutComments.asInstanceOf[Float] / numVideos.asInstanceOf[Float] )
+var numVideos = sc.accumulator(0)
+var numVideosWithoutComments = sc.accumulator(0)
+
+sc.cassandraTable("killr_video", "videos").foreach{ v => 
+                                 numVideos += 1;
+                                 if ( v.getStringOption("description").isEmpty ) numVideosWithoutComments += 1 }
+
+printf( "%.2f%%", 100.0 * numVideosWithoutComments.value.asInstanceOf[Float] / numVideos.value.asInstanceOf[Float] )
