@@ -1,0 +1,45 @@
+CREATE TABLE killr_video.videos_by_tag (
+
+    tag TEXT,
+
+    title TEXT,
+
+    video_id TIMEUUID,
+
+    avg_rating FLOAT,
+
+    description TEXT,
+
+    genres SET<TEXT>,
+
+    mpaa_rating TEXT,
+
+    release_date TIMESTAMP,
+
+    release_year INT,
+
+    user_id UUID,
+
+    PRIMARY KEY (tag, title, video_id)
+
+);- Count of the number of movies tagged with "christmas" and have "Santa" in description
+
+- Count of the number of movies tagged with "christmas" and have "gift" in description
+
+case class record(tag: String)
+
+val tabrdd = sc.cassandraTable[record]("killr_video","videos_by_tag").select("tag").cache()
+
+val tagcount = tabrdd.filter(a => a.tag.contains("christmas")).count
+
+print(tagcount)
+
+
+
+case class record(tag: String)
+
+val tabrdd = sc.cassandraTable[record]("killr_video","videos_by_tag").select("tag").cache()
+
+val tagcount = tabrdd.filter(a => a.tag.contains("christmas")).count
+
+print(tagcount)
