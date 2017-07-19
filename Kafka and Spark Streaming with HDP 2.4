@@ -1,0 +1,60 @@
+Terminate Current Zookeeper Session
+
+sudo fuser -k 2181/tcp
+
+Kafka Broker Path in HDP 2.4 Sandbox:
+cd /usr/hdp/current/kafka-broker
+
+Start Zookeeper and Kafka:
+
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties  
+
+Important - make sure the port in kafka server.properties is the same where you put the messages via kafka producer
+
+Create a Kafka Topic:
+
+ bin/kafka-topics.sh --create \
+ --topic spark-test-topic1 \
+ --zookeeper sandbox.hortonworks.com:2181 \
+ --partitions 1 \
+ --replication-factor 1
+
+Stream the input customer spreadheet via Kafka:
+
+bin/kafka-console-producer.sh --broker-list sandbox.hortonworks.com:6671 --topic spark-test-topic1 </root/jay/Test/FL_insurance_sample.txt
+
+Check the consumer whether we receive properly:
+
+bin/kafka-console-consumer.sh --zookeeper sandbox.hortonworks.com:2181 --topic spark-test-topic1 --from-beginning
+
+Invoke Spark Shell with the dependencies:
+
+spark-shell --packages org.apache.spark:spark-streaming-kafka_2.10:1.6.2, org.apache.kafka:kafka_2.10:0.8.2.2,org.apache.kafka:kafka-clients:0.8.2.2
+
+Spark Code:
+
+import _root_.kafka.serializer.DefaultDecoder
+import _root_.kafka.serializer.StringDecoder
+import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.spark.storage.StorageLevel
+import org.apache.spark.streaming._
+ // prevent INFO logging from pollution output
+sc.setLogLevel("ERROR")
+ // creating the StreamingContext with 5 seconds interval
+val ssc = new StreamingContext(sc, Seconds(5))
+ val kafkaConf = Map(
+    "metadata.broker.list" -> "sandbox.hortonworks.com:6671",
+    "zookeeper.connect" -> "sandbox.hortonworks.com:2181",
+    "group.id" -> "kafka-streaming-example",
+    "zookeeper.connection.timeout.ms" -> "1000"
+)
+ val lines = KafkaUtils.createStream[Array[Byte], String, DefaultDecoder, StringDecoder](
+    ssc,
+    kafkaConf,
+    Map("spark-test-topic1" -> 1),   // subscripe to topic and partition 1
+    StorageLevel.MEMORY_ONLY
+)
+ val words = lines.flatMap{ case(x, y) => y.split(" ")}
+ words.print()
+ ssc.start()
